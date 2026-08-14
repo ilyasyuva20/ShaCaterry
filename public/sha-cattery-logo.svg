@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0a0e17; }
+      .ring { fill: none; stroke: #ffffff; stroke-width: 6; stroke-dasharray: 500 4; }
+      .ring-inner { fill: none; stroke: #ffffff; stroke-width: 3; stroke-dasharray: 400 3; }
+      .star { fill: #ffffff; }
+      .title { font-family: 'Impact', 'Arial Black', sans-serif; font-weight: 900; fill: #ffffff; font-size: 42px; letter-spacing: 2px; text-anchor: middle; }
+      .paw { fill: #ffffff; }
+      .line { stroke: #ffffff; stroke-width: 2; opacity: 0.8; }
+    </style>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Dark Circular Background -->
+  <circle cx="200" cy="180" r="150" class="bg" />
+
+  <!-- Outer Double Seal Stamp Rings -->
+  <circle cx="200" cy="180" r="142" class="ring" />
+  <circle cx="200" cy="180" r="132" class="ring-inner" />
+
+  <!-- Top 3 Stars -->
+  <g transform="translate(0, -10)">
+    <!-- Left Star -->
+    <polygon points="160,75 163,83 172,83 165,88 167,96 160,91 153,96 155,88 148,83 157,83" class="star" transform="rotate(-15 160 85)" />
+    <!-- Center Top Star (Larger) -->
+    <polygon points="200,60 204,70 215,70 206,77 209,87 200,81 191,87 194,77 185,70 196,70" class="star" />
+    <!-- Right Star -->
+    <polygon points="240,75 243,83 252,83 245,88 247,96 240,91 233,96 235,88 228,83 237,83" class="star" transform="rotate(15 240 85)" />
+  </g>
+
+  <!-- Angled Diagonal Container for "SHA CATTERY" -->
+  <g transform="rotate(-12, 200, 180)">
+    <!-- Black cutout banner background to make text pop -->
+    <rect x="50" y="145" width="300" height="70" fill="#0a0e17" rx="6" />
+    <text x="200" y="194" class="title">SHA CATTERY</text>
+  </g>
+
+  <!-- Bottom 3 Stars -->
+  <g transform="translate(0, 10)">
+    <!-- Left Star -->
+    <polygon points="160,265 163,273 172,273 165,278 167,286 160,281 153,286 155,278 148,273 157,273" class="star" transform="rotate(15 160 275)" />
+    <!-- Center Bottom Star (Larger) -->
+    <polygon points="200,270 204,280 215,280 206,287 209,297 200,291 191,297 194,287 185,280 196,280" class="star" />
+    <!-- Right Star -->
+    <polygon points="240,265 243,273 252,273 245,278 247,286 240,281 233,286 235,278 228,273 237,273" class="star" transform="rotate(-15 240 275)" />
+  </g>
+
+  <!-- Divider Line & Paw Icon at Bottom -->
+  <line x1="40" y1="365" x2="170" y2="365" class="line" />
+  <!-- Paw Center Pad -->
+  <path d="M 200 365 C 190 365 186 375 200 380 C 214 375 210 365 200 365 Z" class="paw" />
+  <!-- Paw Toes -->
+  <circle cx="186" cy="358" r="4" class="paw" />
+  <circle cx="195" cy="354" r="4.5" class="paw" />
+  <circle cx="205" cy="354" r="4.5" class="paw" />
+  <circle cx="214" cy="358" r="4" class="paw" />
+  <line x1="230" y1="365" x2="360" y2="365" class="line" />
+</svg>
