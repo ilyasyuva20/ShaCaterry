@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { SlidersHorizontal, Search, ShieldCheck, X } from 'lucide-react';
+import { SlidersHorizontal, Search, X } from 'lucide-react';
 import { useCatContext } from '../context/CatContext';
 
 export default function Header({ onOpenFilter }) {
@@ -58,16 +58,6 @@ export default function Header({ onOpenFilter }) {
               </svg>
               <span className="hidden sm:inline">Instagram</span>
             </a>
-
-            {/* Owner Admin Link */}
-            <Link
-              to="/admin"
-              className="p-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-amber-500/40 text-slate-300 hover:text-amber-400 transition-all text-xs font-semibold flex items-center gap-1.5"
-              title="Owner Dashboard"
-            >
-              <ShieldCheck className="w-4 h-4 text-amber-400" />
-              <span className="hidden sm:inline">Admin</span>
-            </Link>
           </div>
         </div>
 

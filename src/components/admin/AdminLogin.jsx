@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
-import { Lock, ShieldCheck, ArrowLeft, KeyRound, Sparkles } from 'lucide-react';
+import { Lock, ShieldCheck, ArrowLeft, KeyRound, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCatContext } from '../../context/CatContext';
 
 export default function AdminLogin() {
   const { loginAdmin } = useCatContext();
+  const [username, setUsername] = useState('admin');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const success = loginAdmin(password);
+    const success = loginAdmin(username, password);
     if (!success) {
-      setError('Invalid admin password. Try "admin123" or "shacattery"');
+      setError('Invalid username or password.');
     }
   };
 
@@ -30,21 +31,35 @@ export default function AdminLogin() {
             Sha Cattery Admin
           </h2>
           <p className="text-xs text-slate-400">
-            Enter your passcode to manage listings, categories & media
+            Enter your username & password to access the management portal
           </p>
-        </div>
-
-        {/* Demo Passcode Hint Alert */}
-        <div className="p-3.5 bg-amber-500/10 border border-amber-500/30 rounded-2xl flex items-center gap-2.5 text-xs text-amber-300">
-          <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
-          <span>Demo Password: <strong className="font-mono text-white">admin123</strong> or <strong className="font-mono text-white">shacattery</strong></span>
         </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-              Admin Password
+              Username
+            </label>
+            <div className="relative">
+              <User className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Enter username..."
+                value={username}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                  setError('');
+                }}
+                className="w-full bg-slate-950/80 border border-slate-800 focus:border-amber-500/60 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 outline-none transition-all"
+                required
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+              Password
             </label>
             <div className="relative">
               <KeyRound className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -60,10 +75,11 @@ export default function AdminLogin() {
                 required
               />
             </div>
-            {error && (
-              <p className="text-[11px] text-rose-400 mt-1.5 font-medium">{error}</p>
-            )}
           </div>
+
+          {error && (
+            <p className="text-[11px] text-rose-400 font-medium text-center">{error}</p>
+          )}
 
           <button
             type="submit"

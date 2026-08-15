@@ -307,9 +307,11 @@ export const CatProvider = ({ children }) => {
   });
 
   // Admin Auth Helpers
-  const loginAdmin = (password) => {
-    // Default pass code 'admin123' or any entered
-    if (password === 'admin123' || password === 'shacattery') {
+  const loginAdmin = (username, password) => {
+    const validUsername = (username || '').trim().toLowerCase() === 'admin';
+    const validPassword = password === 'Sha@1989' || password === 'admin123' || password === 'shacattery';
+
+    if (validUsername && validPassword) {
       setIsAdminAuthenticated(true);
       return true;
     }
