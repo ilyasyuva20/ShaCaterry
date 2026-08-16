@@ -43,6 +43,8 @@ export default function CatDetailModal({ cat, onClose }) {
   });
 
   const waLink = generateWhatsAppLink(cat, categoryName, settings.ownerPhone);
+  const isAvailable = cat.status?.toLowerCase() === 'available';
+  const isSoldOut = cat.status?.toLowerCase() === 'sold out';
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -197,9 +199,9 @@ export default function CatDetailModal({ cat, onClose }) {
                   </span>
                   <span
                     className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${
-                      cat.status === 'Available'
+                      isAvailable
                         ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                        : cat.status === 'Sold Out'
+                        : isSoldOut
                         ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
                         : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
                     }`}
@@ -295,21 +297,21 @@ export default function CatDetailModal({ cat, onClose }) {
             </div>
           </div>
 
-          {/* Sticky Bottom Action Bar (CRITICAL REQUIREMENT) */}
+          {/* Sticky Bottom Action Bar */}
           <div className="absolute bottom-0 left-0 right-0 p-4 bg-slate-950/90 backdrop-blur-xl border-t border-slate-800 z-30">
             <a
               href={waLink}
               target="_blank"
               rel="noopener noreferrer"
               className={`w-full py-3.5 px-6 rounded-2xl text-sm font-extrabold transition-all duration-300 flex items-center justify-center gap-2.5 shadow-xl active:scale-[0.98] ${
-                cat.status === 'Available'
+                isAvailable
                   ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-emerald-500/25 hover:brightness-110'
                   : 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-amber-500/25 hover:brightness-110'
               }`}
             >
               <MessageCircle className="w-5 h-5 fill-slate-950" />
               <span>
-                {cat.status === 'Available' ? 'Buy Now / Place Order on WhatsApp' : "I'm Interested — Notify Me"}
+                {isAvailable ? 'Buy Now / Place Order on WhatsApp' : "I'm Interested — Notify Me"}
               </span>
             </a>
           </div>

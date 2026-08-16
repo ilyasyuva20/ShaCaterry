@@ -10,34 +10,37 @@ export default function CatCard({ cat, onSelect }) {
   const categoryName = categoryObj ? categoryObj.name : 'Royal Cat';
 
   const waLink = generateWhatsAppLink(cat, categoryName, settings.ownerPhone);
+  const isAvailable = cat.status?.toLowerCase() === 'available';
+  const isSoldOut = cat.status?.toLowerCase() === 'sold out';
+  const isReserved = cat.status?.toLowerCase() === 'reserved';
 
   const getStatusBadge = () => {
-    switch (cat.status) {
-      case 'Available':
-        return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm backdrop-blur-md">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
-            Available
+    if (isAvailable) {
+      return (
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm backdrop-blur-md">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
           </span>
-        );
-      case 'Sold Out':
-        return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40 shadow-sm backdrop-blur-md">
-            Sold Out
-          </span>
-        );
-      case 'Reserved':
-        return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm backdrop-blur-md">
-            Reserved
-          </span>
-        );
-      default:
-        return null;
+          Available
+        </span>
+      );
     }
+    if (isSoldOut) {
+      return (
+        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40 shadow-sm backdrop-blur-md">
+          Sold Out
+        </span>
+      );
+    }
+    if (isReserved) {
+      return (
+        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm backdrop-blur-md">
+          Reserved
+        </span>
+      );
+    }
+    return null;
   };
 
   return (
@@ -125,15 +128,17 @@ export default function CatCard({ cat, onSelect }) {
             href={waLink}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-md active:scale-95 ${
-              cat.status === 'Available'
+              isAvailable
                 ? 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-emerald-500/20'
                 : 'bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40'
             }`}
           >
             <MessageCircle className="w-3.5 h-3.5" />
-            <span>{cat.status === 'Available' ? 'Buy Now' : 'Interested'}</span>
+            <span>{isAvailable ? 'Buy Now' : 'Interested'}</span>
           </a>
         </div>
       </div>

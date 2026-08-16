@@ -8,13 +8,13 @@ export default function CategorySlider() {
   const { categories, cats, selectedCategoryId, setSelectedCategoryId } = useCatContext();
   const [isCategorySheetOpen, setIsCategorySheetOpen] = useState(false);
 
-  // Helper to count cats per category
+  // Helper to count cats per category with normalized numeric comparison
   const getCatCount = (catId) => {
     if (catId === null) return cats.length;
-    return cats.filter(c => c.category_id === catId).length;
+    return cats.filter(c => Number(c.category_id) === Number(catId)).length;
   };
 
-  const selectedCategoryObj = categories.find(c => c.id === selectedCategoryId);
+  const selectedCategoryObj = categories.find(c => Number(c.id) === Number(selectedCategoryId));
   const selectedName = selectedCategoryId === null ? 'All Cat Breeds' : (selectedCategoryObj?.name || 'All Cat Breeds');
   const selectedCount = getCatCount(selectedCategoryId);
 
@@ -24,7 +24,7 @@ export default function CategorySlider() {
       <div className="p-3 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 border-b border-slate-800/80 sticky top-14 z-20 backdrop-blur-xl space-y-2.5">
         <div className="max-w-7xl mx-auto space-y-2">
           
-          {/* SECTION 1: PROMINENT CATEGORY SELECTION CARD (CLICK ME DESIGN) */}
+          {/* SECTION 1: PROMINENT CATEGORY SELECTION CARD */}
           <div className="space-y-1">
             <div className="flex items-center justify-between px-1">
               <span className="text-[10px] uppercase font-mono font-extrabold text-amber-400 tracking-wider flex items-center gap-1">
@@ -153,13 +153,13 @@ export default function CategorySlider() {
               {/* 2-Column Responsive Category Grid */}
               <div className="grid grid-cols-2 gap-3 pt-1">
                 {categories.map((cat) => {
-                  const isSelected = selectedCategoryId === cat.id;
+                  const isSelected = selectedCategoryId !== null && Number(selectedCategoryId) === Number(cat.id);
                   const count = getCatCount(cat.id);
                   return (
                     <button
                       key={cat.id}
                       onClick={() => {
-                        setSelectedCategoryId(cat.id);
+                        setSelectedCategoryId(Number(cat.id));
                         setIsCategorySheetOpen(false);
                       }}
                       className={`p-3.5 rounded-2xl border-2 flex flex-col justify-between space-y-2 text-left transition-all active:scale-[0.97] ${

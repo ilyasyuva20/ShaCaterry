@@ -5,6 +5,8 @@ export const INITIAL_CATEGORIES = [
   { id: 4, name: 'Bengal Cat' },
   { id: 5, name: 'British Shorthair' },
   { id: 6, name: 'Himalayan Cat' },
+  { id: 7, name: 'Exotic Short Hair' },
+  { id: 8, name: 'Traditional Long Hair' },
 ];
 
 export const INITIAL_CATS = [
@@ -123,5 +125,43 @@ export const INITIAL_CATS = [
     ],
     video_url: null,
     created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 8).toISOString()
+  },
+  {
+    id: 'c707g438-890b-0f4a-5e78-90123456abcd',
+    category_id: 7,
+    title: 'Oliver — Plush Silver Exotic Short Hair',
+    age: '50 days',
+    color: 'Silver Shaded',
+    eye_color: 'Vivid Green',
+    gender: 'Male',
+    is_vaccinated: true,
+    status: 'Available',
+    price: 38000.00,
+    description: 'Chubby doll-face Exotic Short Hair kitten with teddy bear plush coat. Friendly, cuddly, litter trained.',
+    main_image_url: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=1000&q=80',
+    gallery_urls: [
+      'https://images.unsplash.com/photo-1573865526739-10659fec78a5?auto=format&fit=crop&w=1000&q=80'
+    ],
+    video_url: null,
+    created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3).toISOString()
+  },
+  {
+    id: 'c808h549-901c-1a5b-6f89-01234567bcde',
+    category_id: 8,
+    title: 'Bella — Golden Doll Face Traditional Long Hair',
+    age: '2 months',
+    color: 'Golden Cream',
+    eye_color: 'Deep Amber',
+    gender: 'Female',
+    is_vaccinated: true,
+    status: 'Available',
+    price: 32000.00,
+    description: 'Classic Traditional Long Hair (Doll Face) female kitten with luxurious long coat, sweet expression, very affectionate.',
+    main_image_url: 'https://images.unsplash.com/photo-1543852786-1cf6624b9987?auto=format&fit=crop&w=1000&q=80',
+    gallery_urls: [
+      'https://images.unsplash.com/photo-1518791841217-8f162f1e1131?auto=format&fit=crop&w=1000&q=80'
+    ],
+    video_url: null,
+    created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 6).toISOString()
   }
 ];

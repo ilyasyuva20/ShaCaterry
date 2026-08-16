@@ -7,7 +7,7 @@ export default function SettingsView() {
   const { settings, setSettings, loadSupabaseData } = useCatContext();
 
   const [formSettings, setFormSettings] = useState({
-    ownerPhone: settings.ownerPhone || '8089579575',
+    ownerPhone: settings.ownerPhone || '918089579575',
     catteryName: settings.catteryName || 'Sha Cattery',
     currency: settings.currency || '₹',
     supabaseUrl: settings.supabaseUrl || '',
@@ -32,7 +32,8 @@ CREATE TABLE IF NOT EXISTS categories (
 
 INSERT INTO categories (name) VALUES 
 ('Persian Cat'), ('Siamese Cat'), ('Maine Coon'), 
-('Bengal Cat'), ('British Shorthair'), ('Himalayan Cat')
+('Bengal Cat'), ('British Shorthair'), ('Himalayan Cat'),
+('Exotic Short Hair'), ('Traditional Long Hair')
 ON CONFLICT (name) DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS cats (
@@ -98,7 +99,7 @@ CREATE INDEX IF NOT EXISTS idx_cats_category ON cats(category_id);`;
                 <MessageCircle className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-emerald-400" />
                 <input
                   type="text"
-                  placeholder="e.g. 919876543210 (Country code + digits)"
+                  placeholder="e.g. 918089579575 (Country code + digits)"
                   value={formSettings.ownerPhone}
                   onChange={(e) => setFormSettings(prev => ({ ...prev, ownerPhone: e.target.value }))}
                   className="w-full bg-slate-950 border border-slate-800 focus:border-amber-500/50 rounded-xl pl-9 pr-3 py-2 text-slate-100 outline-none"

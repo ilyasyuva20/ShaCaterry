@@ -26,13 +26,13 @@ export default function CatManagementView() {
 
   // Quick stats
   const totalCats = cats.length;
-  const availableCats = cats.filter(c => c.status === 'Available').length;
-  const soldOutCats = cats.filter(c => c.status === 'Sold Out').length;
-  const reservedCats = cats.filter(c => c.status === 'Reserved').length;
+  const availableCats = cats.filter(c => c.status?.toLowerCase() === 'available').length;
+  const soldOutCats = cats.filter(c => c.status?.toLowerCase() === 'sold out').length;
+  const reservedCats = cats.filter(c => c.status?.toLowerCase() === 'reserved').length;
 
-  // Filtered cats table logic
+  // Filtered cats table logic with normalized types
   const filteredTableCats = cats.filter(cat => {
-    if (selectedCategory && cat.category_id !== Number(selectedCategory)) return false;
+    if (selectedCategory && Number(cat.category_id) !== Number(selectedCategory)) return false;
     if (selectedStatus && cat.status !== selectedStatus) return false;
     if (search.trim()) {
       const q = search.toLowerCase();
@@ -46,10 +46,11 @@ export default function CatManagementView() {
   });
 
   const handleStatusCycle = (cat) => {
+    const currentStatus = cat.status?.toLowerCase() || 'available';
     const nextStatus =
-      cat.status === 'Available'
+      currentStatus === 'available'
         ? 'Sold Out'
-        : cat.status === 'Sold Out'
+        : currentStatus === 'sold out'
         ? 'Reserved'
         : 'Available';
     toggleCatStatus(cat.id, nextStatus);
@@ -173,7 +174,10 @@ export default function CatManagementView() {
             </thead>
             <tbody className="divide-y divide-slate-800/80">
               {filteredTableCats.map((cat) => {
-                const catBreed = categories.find(c => c.id === cat.category_id)?.name || 'Unknown';
+                const catBreed = categories.find(c => Number(c.id) === Number(cat.category_id))?.name || 'Unknown';
+                const isAvail = cat.status?.toLowerCase() === 'available';
+                const isSold = cat.status?.toLowerCase() === 'sold out';
+
                 return (
                   <tr key={cat.id} className="hover:bg-slate-800/40 transition-colors">
                     <td className="px-4 py-3">
@@ -214,18 +218,18 @@ export default function CatManagementView() {
                     </td>
 
                     <td className="px-4 py-3 font-serif font-bold text-slate-100">
-                      {cat.price > 0 ? `${settings.currency || '$'}${cat.price.toLocaleString()}` : 'N/A'}
+                      {cat.price > 0 ? `${settings.currency || '₹'}${cat.price.toLocaleString()}` : 'N/A'}
                     </td>
 
-                    {/* FAST STATUS TOGGLE (CRITICAL REQUIREMENT) */}
+                    {/* FAST STATUS TOGGLE */}
                     <td className="px-4 py-3 text-center">
                       <button
                         onClick={() => handleStatusCycle(cat)}
                         title="Click to cycle status: Available -> Sold Out -> Reserved"
                         className={`px-3 py-1 rounded-full text-[11px] font-bold border transition-all active:scale-95 shadow-sm ${
-                          cat.status === 'Available'
+                          isAvail
                             ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30'
-                            : cat.status === 'Sold Out'
+                            : isSold
                             ? 'bg-rose-500/20 text-rose-300 border-rose-500/40 hover:bg-rose-500/30'
                             : 'bg-amber-500/20 text-amber-300 border-amber-500/40 hover:bg-amber-500/30'
                         }`}

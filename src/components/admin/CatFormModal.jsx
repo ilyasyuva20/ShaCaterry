@@ -15,9 +15,9 @@ import {
 import { useCatContext } from '../../context/CatContext';
 import { uploadMediaFile, isSupabaseConfigured } from '../../lib/supabase';
 
-// Zod Form Validation Schema
+// Permissive Zod Form Validation Schema supporting HTTP, local blob URLs, base64, and relative paths
 const catSchema = z.object({
-  title: z.string().min(3, 'Title must be at least 3 characters'),
+  title: z.string().min(2, 'Title must be at least 2 characters'),
   category_id: z.coerce.number().min(1, 'Please select a valid cat category'),
   age: z.string().min(1, 'Age is required (e.g., "54 days", "2 months")'),
   color: z.string().min(1, 'Color description is required'),
@@ -27,8 +27,8 @@ const catSchema = z.object({
   is_vaccinated: z.boolean(),
   price: z.coerce.number().min(0, 'Price must be a positive number'),
   description: z.string().optional(),
-  main_image_url: z.string().url('Main image must be a valid URL'),
-  gallery_urls: z.array(z.string().url()).optional(),
+  main_image_url: z.string().min(1, 'Main image URL or upload is required'),
+  gallery_urls: z.array(z.string()).optional(),
   video_url: z.string().optional()
 });
 
@@ -47,7 +47,7 @@ export default function CatFormModal({ catToEdit, onClose }) {
     gender: catToEdit?.gender || 'Male',
     status: catToEdit?.status || 'Available',
     is_vaccinated: catToEdit?.is_vaccinated ?? true,
-    price: catToEdit?.price || '',
+    price: catToEdit?.price ?? '',
     description: catToEdit?.description || '',
     main_image_url: catToEdit?.main_image_url || '',
     gallery_urls: catToEdit?.gallery_urls || [],
@@ -56,12 +56,14 @@ export default function CatFormModal({ catToEdit, onClose }) {
 
   const [newGalleryInput, setNewGalleryInput] = useState('');
   const [errors, setErrors] = useState({});
+  const [generalError, setGeneralError] = useState('');
   const [uploadingMain, setUploadingMain] = useState(false);
+  const [uploadingGallery, setUploadingGallery] = useState(false);
   const [uploadingVideo, setUploadingVideo] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Handle Main Image File Upload (Supabase Storage or Blob URL)
+  // Handle Main Image File Upload (Supabase Storage or Local Device Gallery Blob)
   const handleMainFileUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -73,6 +75,7 @@ export default function CatFormModal({ catToEdit, onClose }) {
       const result = await uploadMediaFile(file, 'main_images');
       setUploadProgress(100);
       setFormData(prev => ({ ...prev, main_image_url: result.url }));
+      setErrors(prev => ({ ...prev, main_image_url: '' }));
     } catch (err) {
       console.error('Failed to upload main image:', err);
       alert('Media upload error: ' + err.message);
@@ -81,6 +84,30 @@ export default function CatFormModal({ catToEdit, onClose }) {
         setUploadingMain(false);
         setUploadProgress(0);
       }, 400);
+    }
+  };
+
+  // Handle Gallery Sub-Images File Upload (PC or Mobile Gallery)
+  const handleGalleryFileUpload = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    setUploadingGallery(true);
+    try {
+      const uploadedUrls = [];
+      for (const file of files) {
+        const result = await uploadMediaFile(file, 'gallery_images');
+        uploadedUrls.push(result.url);
+      }
+      setFormData(prev => ({
+        ...prev,
+        gallery_urls: [...prev.gallery_urls, ...uploadedUrls]
+      }));
+    } catch (err) {
+      console.error('Failed to upload gallery sub-image(s):', err);
+      alert('Gallery media upload error: ' + err.message);
+    } finally {
+      setUploadingGallery(false);
     }
   };
 
@@ -128,12 +155,13 @@ export default function CatFormModal({ catToEdit, onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors({});
+    setGeneralError('');
 
     const validatedData = {
       ...formData,
       category_id: Number(formData.category_id),
       price: formData.price === '' ? 0 : Number(formData.price),
-      video_url: formData.video_url?.trim() || undefined
+      video_url: formData.video_url?.trim() || ''
     };
 
     // Zod validation
@@ -146,6 +174,7 @@ export default function CatFormModal({ catToEdit, onClose }) {
         formattedErrors[path] = issue.message;
       });
       setErrors(formattedErrors);
+      setGeneralError('Please fix the highlighted form errors above before saving.');
       return;
     }
 
@@ -159,6 +188,7 @@ export default function CatFormModal({ catToEdit, onClose }) {
       onClose();
     } catch (err) {
       console.error('Save cat error:', err);
+      setGeneralError('Failed to save cat listing: ' + err.message);
     } finally {
       setIsSubmitting(false);
     }
@@ -199,6 +229,13 @@ export default function CatFormModal({ catToEdit, onClose }) {
 
           {/* Form Content - Scrollable */}
           <form onSubmit={handleSubmit} className="overflow-y-auto p-4 sm:p-6 space-y-6 flex-1 no-scrollbar text-xs">
+            {generalError && (
+              <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-300 flex items-center gap-2 font-medium">
+                <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
+                <span>{generalError}</span>
+              </div>
+            )}
+
             {/* Basic Info Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
@@ -319,7 +356,7 @@ export default function CatFormModal({ catToEdit, onClose }) {
               </div>
             </div>
 
-            {/* Media Upload Section (CRITICAL REQUIREMENT) */}
+            {/* Media Upload Section */}
             <div className="p-4 bg-slate-950/60 rounded-2xl border border-slate-800 space-y-4">
               <h4 className="font-bold text-amber-400 font-serif text-xs uppercase tracking-wider flex items-center gap-2">
                 <ImageIcon className="w-4 h-4" />
@@ -329,7 +366,7 @@ export default function CatFormModal({ catToEdit, onClose }) {
               {/* Main Image URL & File Upload */}
               <div>
                 <label className="block font-semibold text-slate-300 mb-1">
-                  Main Image URL *
+                  Main Image *
                 </label>
                 <div className="flex gap-2">
                   <input
@@ -339,7 +376,7 @@ export default function CatFormModal({ catToEdit, onClose }) {
                     onChange={(e) => setFormData(prev => ({ ...prev, main_image_url: e.target.value }))}
                     className="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-slate-100 outline-none"
                   />
-                  <label className="cursor-pointer px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold border border-slate-700 flex items-center gap-1.5 shrink-0 transition-all">
+                  <label className="cursor-pointer px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold border border-slate-700 flex items-center gap-1.5 shrink-0 transition-all active:scale-95 shadow-sm">
                     {uploadingMain ? (
                       <Loader2 className="w-4 h-4 animate-spin text-amber-400" />
                     ) : (
@@ -373,36 +410,61 @@ export default function CatFormModal({ catToEdit, onClose }) {
                 )}
               </div>
 
-              {/* Gallery URLs */}
+              {/* Gallery Sub-Images File Upload (Same style as Main Image) */}
               <div>
-                <label className="block font-semibold text-slate-300 mb-1">Additional Gallery Photos</label>
+                <label className="block font-semibold text-slate-300 mb-1">
+                  Additional Gallery Photos (Sub Images)
+                </label>
                 <div className="flex gap-2 mb-2">
                   <input
                     type="text"
-                    placeholder="Paste extra image URL..."
+                    placeholder="Paste extra image URL or upload from device..."
                     value={newGalleryInput}
                     onChange={(e) => setNewGalleryInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        addGalleryUrl();
+                      }
+                    }}
                     className="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-slate-100 outline-none"
                   />
                   <button
                     type="button"
                     onClick={addGalleryUrl}
-                    className="px-3 py-2 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/40 font-semibold hover:bg-amber-500/30 flex items-center gap-1"
+                    className="px-3 py-2 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/40 font-semibold hover:bg-amber-500/30 flex items-center gap-1 shrink-0"
                   >
                     <Plus className="w-4 h-4" />
                     Add
                   </button>
+                  <label className="cursor-pointer px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold border border-slate-700 flex items-center gap-1.5 shrink-0 transition-all active:scale-95 shadow-sm">
+                    {uploadingGallery ? (
+                      <Loader2 className="w-4 h-4 animate-spin text-amber-400" />
+                    ) : (
+                      <Upload className="w-4 h-4 text-amber-400" />
+                    )}
+                    <span>Upload File</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleGalleryFileUpload}
+                      className="hidden"
+                      disabled={uploadingGallery}
+                    />
+                  </label>
                 </div>
 
                 {formData.gallery_urls.length > 0 && (
                   <div className="flex flex-wrap gap-2 pt-1">
                     {formData.gallery_urls.map((url, idx) => (
-                      <div key={idx} className="relative group w-14 h-14 rounded-xl overflow-hidden border border-slate-800">
-                        <img src={url} alt="" className="w-full h-full object-cover" />
+                      <div key={idx} className="relative group w-16 h-16 rounded-xl overflow-hidden border border-slate-800 shadow-sm bg-slate-950">
+                        <img src={url} alt={`Sub image ${idx + 1}`} className="w-full h-full object-cover" />
                         <button
                           type="button"
                           onClick={() => removeGalleryUrl(idx)}
-                          className="absolute inset-0 bg-slate-950/70 text-rose-400 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="absolute inset-0 bg-slate-950/75 text-rose-400 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          title="Remove photo"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -426,7 +488,7 @@ export default function CatFormModal({ catToEdit, onClose }) {
                     onChange={(e) => setFormData(prev => ({ ...prev, video_url: e.target.value }))}
                     className="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-slate-100 outline-none"
                   />
-                  <label className="cursor-pointer px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold border border-slate-700 flex items-center gap-1.5 shrink-0 transition-all">
+                  <label className="cursor-pointer px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold border border-slate-700 flex items-center gap-1.5 shrink-0 transition-all active:scale-95 shadow-sm">
                     {uploadingVideo ? (
                       <Loader2 className="w-4 h-4 animate-spin text-amber-400" />
                     ) : (

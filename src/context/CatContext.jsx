@@ -10,15 +10,43 @@ const STORAGE_KEY_SETTINGS = 'sha_cattery_settings_v1';
 const STORAGE_KEY_AUTH = 'sha_cattery_auth_v1';
 
 export const CatProvider = ({ children }) => {
-  // State initialization
+  // State initialization with auto-merge for missing categories
   const [categories, setCategories] = useState(() => {
     const saved = localStorage.getItem(STORAGE_KEY_CATEGORIES);
-    return saved ? JSON.parse(saved) : INITIAL_CATEGORIES;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        const updated = [...parsed];
+        INITIAL_CATEGORIES.forEach(initCat => {
+          if (!updated.some(c => c.name.toLowerCase() === initCat.name.toLowerCase())) {
+            updated.push(initCat);
+          }
+        });
+        return updated;
+      } catch (e) {
+        return INITIAL_CATEGORIES;
+      }
+    }
+    return INITIAL_CATEGORIES;
   });
 
   const [cats, setCats] = useState(() => {
     const saved = localStorage.getItem(STORAGE_KEY_CATS);
-    return saved ? JSON.parse(saved) : INITIAL_CATS;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        const updated = [...parsed];
+        INITIAL_CATS.forEach(initCat => {
+          if (!updated.some(c => c.id === initCat.id)) {
+            updated.push(initCat);
+          }
+        });
+        return updated;
+      } catch (e) {
+        return INITIAL_CATS;
+      }
+    }
+    return INITIAL_CATS;
   });
 
   const [settings, setSettings] = useState(() => {
@@ -26,10 +54,11 @@ export const CatProvider = ({ children }) => {
     if (saved) {
       const parsed = JSON.parse(saved);
       if (parsed.currency === '$') parsed.currency = '₹';
+      if (parsed.ownerPhone === '8089579575') parsed.ownerPhone = '918089579575';
       return parsed;
     }
     return {
-      ownerPhone: '8089579575',
+      ownerPhone: '918089579575',
       catteryName: 'Sha Cattery',
       currency: '₹',
       supabaseUrl: import.meta.env.VITE_SUPABASE_URL || '',
@@ -112,13 +141,14 @@ export const CatProvider = ({ children }) => {
   const addCat = async (newCatData) => {
     setLoading(true);
     const tempId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `cat-${Date.now()}`;
-    const newCat = {
+    const formattedCat = {
       id: tempId,
       created_at: new Date().toISOString(),
       gallery_urls: newCatData.gallery_urls || [],
       is_vaccinated: Boolean(newCatData.is_vaccinated),
       price: newCatData.price ? parseFloat(newCatData.price) : 0,
-      ...newCatData
+      ...newCatData,
+      category_id: Number(newCatData.category_id)
     };
 
     if (isSupabaseConfigured() && supabase) {
@@ -126,19 +156,19 @@ export const CatProvider = ({ children }) => {
         const { data, error } = await supabase
           .from('cats')
           .insert([{
-            category_id: parseInt(newCat.category_id, 10),
-            title: newCat.title,
-            age: newCat.age,
-            color: newCat.color,
-            eye_color: newCat.eye_color,
-            gender: newCat.gender,
-            is_vaccinated: newCat.is_vaccinated,
-            status: newCat.status,
-            price: newCat.price,
-            description: newCat.description,
-            main_image_url: newCat.main_image_url,
-            gallery_urls: newCat.gallery_urls,
-            video_url: newCat.video_url || null
+            category_id: parseInt(formattedCat.category_id, 10),
+            title: formattedCat.title,
+            age: formattedCat.age,
+            color: formattedCat.color,
+            eye_color: formattedCat.eye_color,
+            gender: formattedCat.gender,
+            is_vaccinated: formattedCat.is_vaccinated,
+            status: formattedCat.status,
+            price: formattedCat.price,
+            description: formattedCat.description,
+            main_image_url: formattedCat.main_image_url,
+            gallery_urls: formattedCat.gallery_urls,
+            video_url: formattedCat.video_url || null
           }])
           .select();
 
@@ -154,33 +184,45 @@ export const CatProvider = ({ children }) => {
     }
 
     // Fallback to local state
-    setCats(prev => [newCat, ...prev]);
+    setCats(prev => [formattedCat, ...prev]);
     setLoading(false);
-    return newCat;
+    return formattedCat;
   };
 
   const updateCat = async (id, updatedFields) => {
     setLoading(true);
+    const formattedFields = {
+      ...updatedFields,
+      category_id: Number(updatedFields.category_id),
+      price: updatedFields.price ? parseFloat(updatedFields.price) : 0
+    };
+
+    let updatedFromDb = null;
     if (isSupabaseConfigured() && supabase) {
       try {
         const { data, error } = await supabase
           .from('cats')
-          .update(updatedFields)
+          .update(formattedFields)
           .eq('id', id)
           .select();
 
-        if (error) throw error;
-        if (data && data[0]) {
-          setCats(prev => prev.map(c => (c.id === id ? data[0] : c)));
-          setLoading(false);
-          return data[0];
+        if (!error && data && data[0]) {
+          updatedFromDb = data[0];
         }
       } catch (err) {
         console.error('Failed to update cat in Supabase:', err);
       }
     }
 
-    setCats(prev => prev.map(c => (c.id === id ? { ...c, ...updatedFields } : c)));
+    // Always update local state so UI updates immediately
+    setCats(prev =>
+      prev.map(c => {
+        if (c.id === id) {
+          return updatedFromDb ? updatedFromDb : { ...c, ...formattedFields };
+        }
+        return c;
+      })
+    );
     setLoading(false);
   };
 
@@ -241,7 +283,7 @@ export const CatProvider = ({ children }) => {
         console.error('Error deleting category from Supabase:', err);
       }
     }
-    setCategories(prev => prev.filter(c => c.id !== id));
+    setCategories(prev => prev.filter(c => Number(c.id) !== Number(id)));
   };
 
   // Filter helpers
@@ -257,10 +299,10 @@ export const CatProvider = ({ children }) => {
     });
   };
 
-  // Filtered cats calculation
+  // Filtered cats calculation with strict type normalization (Number)
   const filteredCats = cats.filter(cat => {
     // Category match
-    if (selectedCategoryId !== null && cat.category_id !== selectedCategoryId) {
+    if (selectedCategoryId !== null && Number(cat.category_id) !== Number(selectedCategoryId)) {
       return false;
     }
     // Search query match
@@ -268,7 +310,7 @@ export const CatProvider = ({ children }) => {
       const q = searchQuery.toLowerCase();
       const catName = cat.title.toLowerCase();
       const color = cat.color ? cat.color.toLowerCase() : '';
-      const breed = categories.find(c => c.id === cat.category_id)?.name.toLowerCase() || '';
+      const breed = categories.find(c => Number(c.id) === Number(cat.category_id))?.name.toLowerCase() || '';
       if (!catName.includes(q) && !color.includes(q) && !breed.includes(q)) {
         return false;
       }
@@ -299,7 +341,7 @@ export const CatProvider = ({ children }) => {
       return false;
     }
     // Status available only filter
-    if (filterState.statusAvailableOnly && cat.status !== 'Available') {
+    if (filterState.statusAvailableOnly && cat.status?.toLowerCase() !== 'available') {
       return false;
     }
 
