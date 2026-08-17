@@ -88,8 +88,6 @@ DROP POLICY IF EXISTS "Allow public reads from cat-media" ON storage.objects;
 DROP POLICY IF EXISTS "Allow public updates to cat-media" ON storage.objects;
 DROP POLICY IF EXISTS "Allow public deletes from cat-media" ON storage.objects;
 
-ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
-
 CREATE POLICY "Allow public uploads to cat-media" ON storage.objects
   FOR INSERT WITH CHECK (bucket_id = 'cat-media');
 
