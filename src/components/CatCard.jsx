@@ -131,13 +131,13 @@ export default function CatCard({ cat, onSelect }) {
             onClick={(e) => {
               e.stopPropagation();
             }}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-md active:scale-95 ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5 shadow-md active:scale-95 ${
               isAvailable
                 ? 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-emerald-500/20'
-                : 'bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40'
+                : 'bg-amber-400 hover:bg-amber-300 text-slate-950 shadow-amber-500/20'
             }`}
           >
-            <MessageCircle className="w-3.5 h-3.5" />
+            <MessageCircle className="w-3.5 h-3.5 fill-slate-950" />
             <span>{isAvailable ? 'Buy Now' : 'Interested'}</span>
           </a>
         </div>
