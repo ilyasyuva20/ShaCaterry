@@ -72,18 +72,32 @@ CREATE POLICY "Public Update Cats" ON cats
 CREATE POLICY "Public Delete Cats" ON cats
   FOR DELETE USING (true);
 
--- 5. Storage Buckets Configuration for Supabase Storage
+-- 5. Storage Buckets & Storage Policies Configuration
 INSERT INTO storage.buckets (id, name, public) 
 VALUES ('cat-media', 'cat-media', true)
-ON CONFLICT (id) DO NOTHING;
+ON CONFLICT (id) DO UPDATE SET public = true;
 
--- Allow public read access to storage bucket
-CREATE POLICY "Public Access Cat Media" ON storage.objects
-  FOR SELECT USING (bucket_id = 'cat-media');
+-- Drop old storage policies if existing
+DROP POLICY IF EXISTS "Public Access Cat Media" ON storage.objects;
+DROP POLICY IF EXISTS "Admin Upload Cat Media" ON storage.objects;
+DROP POLICY IF EXISTS "Admin Delete Cat Media" ON storage.objects;
+DROP POLICY IF EXISTS "Public Upload Cat Media" ON storage.objects;
+DROP POLICY IF EXISTS "Public Delete Cat Media" ON storage.objects;
+DROP POLICY IF EXISTS "Allow public uploads to cat-media" ON storage.objects;
+DROP POLICY IF EXISTS "Allow public reads from cat-media" ON storage.objects;
+DROP POLICY IF EXISTS "Allow public updates to cat-media" ON storage.objects;
+DROP POLICY IF EXISTS "Allow public deletes from cat-media" ON storage.objects;
 
--- Allow public upload and delete for media files
-CREATE POLICY "Public Upload Cat Media" ON storage.objects
+ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow public uploads to cat-media" ON storage.objects
   FOR INSERT WITH CHECK (bucket_id = 'cat-media');
 
-CREATE POLICY "Public Delete Cat Media" ON storage.objects
+CREATE POLICY "Allow public reads from cat-media" ON storage.objects
+  FOR SELECT USING (bucket_id = 'cat-media');
+
+CREATE POLICY "Allow public updates to cat-media" ON storage.objects
+  FOR UPDATE USING (bucket_id = 'cat-media');
+
+CREATE POLICY "Allow public deletes from cat-media" ON storage.objects
   FOR DELETE USING (bucket_id = 'cat-media');
