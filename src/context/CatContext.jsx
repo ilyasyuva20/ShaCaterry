@@ -109,7 +109,13 @@ export const CatProvider = ({ children }) => {
         .order('created_at', { ascending: false });
 
       if (!catsError && catsData) {
-        setCats(catsData);
+        setCats(prevLocal => {
+          const remoteIds = new Set(catsData.map(c => String(c.id)));
+          const localOnly = prevLocal.filter(
+            c => !remoteIds.has(String(c.id)) && typeof c.id === 'string' && c.id.startsWith('cat-')
+          );
+          return [...catsData, ...localOnly];
+        });
       }
       setDbConnected(true);
     } catch (err) {
@@ -137,42 +143,44 @@ export const CatProvider = ({ children }) => {
       category_id: Number(newCatData.category_id)
     };
 
-    if (isSupabaseConfigured() && supabase) {
-      try {
-        const { data, error } = await supabase
-          .from('cats')
-          .insert([{
-            category_id: parseInt(formattedCat.category_id, 10),
-            title: formattedCat.title,
-            age: formattedCat.age,
-            color: formattedCat.color,
-            eye_color: formattedCat.eye_color,
-            gender: formattedCat.gender,
-            is_vaccinated: formattedCat.is_vaccinated,
-            status: formattedCat.status,
-            price: formattedCat.price,
-            description: formattedCat.description,
-            main_image_url: formattedCat.main_image_url,
-            gallery_urls: formattedCat.gallery_urls,
-            video_url: formattedCat.video_url || null
-          }])
-          .select();
+    let inserted = formattedCat;
 
-        if (error) throw error;
-        if (data && data[0]) {
-          setCats(prev => [data[0], ...prev]);
-          setLoading(false);
-          return data[0];
-        }
-      } catch (err) {
-        console.error('Failed to insert cat to Supabase:', err);
+    if (isSupabaseConfigured() && supabase) {
+      const { data, error } = await supabase
+        .from('cats')
+        .insert([{
+          category_id: parseInt(formattedCat.category_id, 10),
+          title: formattedCat.title,
+          age: formattedCat.age,
+          color: formattedCat.color,
+          eye_color: formattedCat.eye_color,
+          gender: formattedCat.gender,
+          is_vaccinated: formattedCat.is_vaccinated,
+          status: formattedCat.status,
+          price: formattedCat.price,
+          description: formattedCat.description,
+          main_image_url: formattedCat.main_image_url,
+          gallery_urls: formattedCat.gallery_urls,
+          video_url: formattedCat.video_url || null
+        }])
+        .select();
+
+      if (error) {
+        console.error('Failed to insert cat to Supabase:', error);
+        setLoading(false);
+        throw new Error(error.message || 'Supabase Row Level Security (RLS) error');
+      }
+      
+      if (data && data[0]) {
+        inserted = data[0];
       }
     }
 
-    // Fallback to local state
-    setCats(prev => [formattedCat, ...prev]);
+    // Always update local state immediately
+    setCats(prev => [inserted, ...prev]);
+    clearFilters();
     setLoading(false);
-    return formattedCat;
+    return inserted;
   };
 
   const updateCat = async (id, updatedFields) => {

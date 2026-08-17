@@ -28,34 +28,48 @@ export function generateWhatsAppLink(cat, categoryName = 'Royal Cat', ownerPhone
   let messageText = '';
 
   if (isAvailable) {
-    messageText = `*[NEW ORDER REQUEST]* 🐾
-Hi Sha Cattery, I would like to buy this cat:
+    messageText = `👑 *SHA CATTERY — NEW ORDER REQUEST* 🐾
+─────────────────────────────
+*Hi Sha Cattery,* I would like to buy this kitten!
 
-*Cat Title:* ${cat?.title || 'Cat'}
-*Cat ID:* ${cat?.id || 'N/A'}
-*Category:* ${categoryName}
-*Age:* ${cat?.age || 'N/A'} | *Gender:* ${cat?.gender || 'N/A'}
-*Color:* ${cat?.color || 'N/A'} | *Eye Color:* ${cat?.eye_color || 'N/A'}
-*Vaccinated:* ${cat?.is_vaccinated ? 'Yes' : 'No'}
-*Price:* ${cat?.price ? `₹${cat.price.toLocaleString()}` : 'Price on request'}
+📌 *KITTEN DETAILS*
+• *Title:* ${cat?.title || 'Cat'}
+• *Breed:* ${categoryName}
+• *Age:* ${cat?.age || 'N/A'}
+• *Gender:* ${cat?.gender || 'N/A'}
+• *Color:* ${cat?.color || 'N/A'}
+• *Eye Color:* ${cat?.eye_color || 'N/A'}
+• *Vaccinated:* ${cat?.is_vaccinated ? 'Yes ✅' : 'No ❌'}
 
-*Image Link:* ${cat?.main_image_url || ''}
+💰 *PRICE:* ${cat?.price ? `₹${cat.price.toLocaleString()}` : 'Price on Request'}
 
-Please let me know the payment and delivery details.`;
+📸 *PHOTO PREVIEW:*
+${cat?.main_image_url || ''}
+
+💬 *Please share payment details and delivery options.*
+─────────────────────────────`;
   } else {
     // Sold Out or Reserved
-    messageText = `*[INTEREST NOTIFICATION]* 🔔
-Hi Sha Cattery, I am interested in this cat (${cat?.status || 'Not Available'}):
+    messageText = `🔔 *SHA CATTERY — INTEREST NOTIFICATION* 🐾
+─────────────────────────────
+*Hi Sha Cattery,* I am interested in this kitten (*Status: ${cat?.status || 'Not Available'}*):
 
-*Cat Title:* ${cat?.title || 'Cat'}
-*Cat ID:* ${cat?.id || 'N/A'}
-*Category:* ${categoryName}
-*Preferred Age:* ${cat?.age || 'N/A'} | *Gender:* ${cat?.gender || 'N/A'}
-*Color:* ${cat?.color || 'N/A'}
+📌 *KITTEN DETAILS*
+• *Title:* ${cat?.title || 'Cat'}
+• *Breed:* ${categoryName}
+• *Age:* ${cat?.age || 'N/A'}
+• *Gender:* ${cat?.gender || 'N/A'}
+• *Color:* ${cat?.color || 'N/A'}
+• *Eye Color:* ${cat?.eye_color || 'N/A'}
+• *Vaccinated:* ${cat?.is_vaccinated ? 'Yes ✅' : 'No ❌'}
 
-*Reference Image:* ${cat?.main_image_url || ''}
+💰 *LISTED PRICE:* ${cat?.price ? `₹${cat.price.toLocaleString()}` : 'Price on Request'}
 
-Please notify me when a new litter or similar cat becomes available!`;
+📸 *PHOTO PREVIEW:*
+${cat?.main_image_url || ''}
+
+📩 *Please notify me when a new litter or similar kitten becomes available!*
+─────────────────────────────`;
   }
 
   const encodedText = encodeURIComponent(messageText);

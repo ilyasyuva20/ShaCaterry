@@ -283,6 +283,9 @@ export default function CatManagementView() {
           onClose={() => {
             setIsAddModalOpen(false);
             setEditingCat(null);
+            setSearch('');
+            setSelectedCategory('');
+            setSelectedStatus('');
           }}
         />
       )}
