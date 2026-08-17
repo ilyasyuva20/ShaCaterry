@@ -45,9 +45,28 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
 ${e?.main_image_url||``}
 
 💬 *Please share payment details and delivery options.*
-─────────────────────────────`:`🔔 *${l} — INTEREST NOTIFICATION* 🐾
+─────────────────────────────`:e?.status?.toLowerCase()===`booked`||e?.status?.toLowerCase()===`reserved`?`🔔 *${l} — BOOKED KITTEN INQUIRY* 🐾
 ─────────────────────────────
-*Hi ${i||`Sha Cattery`},* I am interested in this kitten (*Status: ${e?.status||`Not Available`}*):
+*Hi ${i||`Sha Cattery`},* I am interested in this kitten which is currently marked as *BOOKED*:
+
+📌 *KITTEN DETAILS*
+• *Title:* ${e?.title||`Cat`}
+• *Breed:* ${t}
+• *Age:* ${e?.age||`N/A`}
+• *Gender:* ${e?.gender||`N/A`}
+• *Color:* ${e?.color||`N/A`}
+• *Eye Color:* ${e?.eye_color||`N/A`}
+• *Vaccinated:* ${e?.is_vaccinated?`Yes ✅`:`No ❌`}
+
+💰 *LISTED PRICE:* ${c}
+
+📸 *PHOTO PREVIEW:*
+${e?.main_image_url||``}
+
+📩 *Please notify me if this booking gets cancelled or if a similar kitten is available!*
+─────────────────────────────`:`🔔 *${l} — SOLD OUT KITTEN INQUIRY* 🐾
+─────────────────────────────
+*Hi ${i||`Sha Cattery`},* I am interested in this kitten which is currently *SOLD OUT*:
 
 📌 *KITTEN DETAILS*
 • *Title:* ${e?.title||`Cat`}

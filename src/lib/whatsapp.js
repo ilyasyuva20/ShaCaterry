@@ -63,11 +63,32 @@ ${cat?.main_image_url || ''}
 
 💬 *Please share payment details and delivery options.*
 ─────────────────────────────`;
-  } else {
-    // Sold Out or Booked
-    messageText = `🔔 *${businessUpper} — INTEREST NOTIFICATION* 🐾
+  } else if (cat?.status?.toLowerCase() === 'booked' || cat?.status?.toLowerCase() === 'reserved') {
+    messageText = `🔔 *${businessUpper} — BOOKED KITTEN INQUIRY* 🐾
 ─────────────────────────────
-*Hi ${catteryName || 'Sha Cattery'},* I am interested in this kitten (*Status: ${cat?.status || 'Not Available'}*):
+*Hi ${catteryName || 'Sha Cattery'},* I am interested in this kitten which is currently marked as *BOOKED*:
+
+📌 *KITTEN DETAILS*
+• *Title:* ${cat?.title || 'Cat'}
+• *Breed:* ${categoryName}
+• *Age:* ${cat?.age || 'N/A'}
+• *Gender:* ${cat?.gender || 'N/A'}
+• *Color:* ${cat?.color || 'N/A'}
+• *Eye Color:* ${cat?.eye_color || 'N/A'}
+• *Vaccinated:* ${cat?.is_vaccinated ? 'Yes ✅' : 'No ❌'}
+
+💰 *LISTED PRICE:* ${priceDisplay}
+
+📸 *PHOTO PREVIEW:*
+${cat?.main_image_url || ''}
+
+📩 *Please notify me if this booking gets cancelled or if a similar kitten is available!*
+─────────────────────────────`;
+  } else {
+    // Sold Out
+    messageText = `🔔 *${businessUpper} — SOLD OUT KITTEN INQUIRY* 🐾
+─────────────────────────────
+*Hi ${catteryName || 'Sha Cattery'},* I am interested in this kitten which is currently *SOLD OUT*:
 
 📌 *KITTEN DETAILS*
 • *Title:* ${cat?.title || 'Cat'}
