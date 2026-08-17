@@ -4,7 +4,7 @@ import { useCatContext } from '../../context/CatContext';
 import { isSupabaseConfigured } from '../../lib/supabase';
 
 export default function SettingsView() {
-  const { settings, setSettings, loadSupabaseData } = useCatContext();
+  const { settings, setSettings, updateSettings, loadSupabaseData } = useCatContext();
 
   const [formSettings, setFormSettings] = useState({
     ownerPhone: settings.ownerPhone || '',
@@ -29,7 +29,11 @@ export default function SettingsView() {
 
   const handleSave = (e) => {
     e.preventDefault();
-    setSettings(formSettings);
+    if (updateSettings) {
+      updateSettings(formSettings);
+    } else {
+      setSettings(formSettings);
+    }
     setSavedSuccess(true);
     setTimeout(() => setSavedSuccess(false), 3000);
   };
@@ -55,7 +59,7 @@ CREATE TABLE IF NOT EXISTS cats (
   eye_color VARCHAR(100) NOT NULL,
   gender VARCHAR(20) CHECK (gender IN ('Male', 'Female')),
   is_vaccinated BOOLEAN DEFAULT false,
-  status VARCHAR(50) CHECK (status IN ('Available', 'Sold Out', 'Reserved')),
+  status VARCHAR(50) CHECK (status IN ('Available', 'Sold Out', 'Booked')),
   price NUMERIC(10, 2),
   description TEXT,
   main_image_url TEXT NOT NULL,
@@ -63,6 +67,18 @@ CREATE TABLE IF NOT EXISTS cats (
   video_url TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+CREATE TABLE IF NOT EXISTS site_settings (
+  id INT PRIMARY KEY DEFAULT 1,
+  owner_phone VARCHAR(50),
+  cattery_name VARCHAR(100),
+  currency VARCHAR(10),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+INSERT INTO site_settings (id, owner_phone, cattery_name, currency)
+VALUES (1, '', 'Sha Cattery', '₹')
+ON CONFLICT (id) DO NOTHING;
 
 CREATE INDEX IF NOT EXISTS idx_cats_status ON cats(status);
 CREATE INDEX IF NOT EXISTS idx_cats_category ON cats(category_id);`;

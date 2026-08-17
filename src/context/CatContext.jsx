@@ -118,6 +118,22 @@ export const CatProvider = ({ children }) => {
           return [...catsData, ...localOnly];
         });
       }
+      // Fetch Site Settings
+      const { data: settingsData, error: settingsError } = await supabase
+        .from('site_settings')
+        .select('*')
+        .eq('id', 1)
+        .maybeSingle();
+
+      if (!settingsError && settingsData) {
+        setSettings(prev => ({
+          ...prev,
+          ownerPhone: settingsData.owner_phone !== undefined ? settingsData.owner_phone : prev.ownerPhone,
+          catteryName: settingsData.cattery_name || prev.catteryName,
+          currency: settingsData.currency || prev.currency
+        }));
+      }
+
       setDbConnected(true);
     } catch (err) {
       console.error('Error fetching Supabase data:', err);
@@ -355,8 +371,23 @@ export const CatProvider = ({ children }) => {
     return false;
   };
 
-  const logoutAdmin = () => {
-    setIsAdminAuthenticated(false);
+  const updateSettings = async (newSettings) => {
+    setSettings(newSettings);
+    if (isSupabaseConfigured() && supabase) {
+      try {
+        await supabase
+          .from('site_settings')
+          .upsert({
+            id: 1,
+            owner_phone: newSettings.ownerPhone || '',
+            cattery_name: newSettings.catteryName || 'Sha Cattery',
+            currency: newSettings.currency || '₹',
+            updated_at: new Date().toISOString()
+          });
+      } catch (err) {
+        console.error('Error updating site_settings in Supabase:', err);
+      }
+    }
   };
 
   const value = {
@@ -364,6 +395,7 @@ export const CatProvider = ({ children }) => {
     categories,
     settings,
     setSettings,
+    updateSettings,
     loading,
     dbConnected,
     selectedCategoryId,
