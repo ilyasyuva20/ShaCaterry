@@ -221,21 +221,51 @@ export default function CatManagementView() {
                       {cat.price > 0 ? `${settings.currency || '₹'}${cat.price.toLocaleString()}` : 'N/A'}
                     </td>
 
-                    {/* FAST STATUS TOGGLE */}
+                    {/* FAST STATUS SWITCHER */}
                     <td className="px-4 py-3 text-center">
-                      <button
-                        onClick={() => handleStatusCycle(cat)}
-                        title="Click to cycle status: Available -> Sold Out -> Booked"
-                        className={`px-3 py-1 rounded-full text-[11px] font-bold border transition-all active:scale-95 shadow-sm ${
-                          isAvail
-                            ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30'
-                            : isSold
-                            ? 'bg-rose-500/20 text-rose-300 border-rose-500/40 hover:bg-rose-500/30'
-                            : 'bg-amber-500/20 text-amber-300 border-amber-500/40 hover:bg-amber-500/30'
-                        }`}
-                      >
-                        {cat.status} ⚡
-                      </button>
+                      <div className="inline-flex items-center p-1 rounded-xl bg-slate-950 border border-slate-800 gap-1 shadow-inner">
+                        <button
+                          type="button"
+                          onClick={() => toggleCatStatus(cat.id, 'Available')}
+                          className={`px-2.5 py-1 rounded-lg text-[10px] font-extrabold transition-all flex items-center gap-1 active:scale-95 ${
+                            isAvail
+                              ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/25 scale-[1.03]'
+                              : 'text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10'
+                          }`}
+                          title="Set status to Available"
+                        >
+                          <CheckCircle2 className="w-3 h-3" />
+                          Available
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => toggleCatStatus(cat.id, 'Sold Out')}
+                          className={`px-2.5 py-1 rounded-lg text-[10px] font-extrabold transition-all flex items-center gap-1 active:scale-95 ${
+                            isSold
+                              ? 'bg-rose-500 text-slate-950 shadow-md shadow-rose-500/25 scale-[1.03]'
+                              : 'text-slate-400 hover:text-rose-400 hover:bg-rose-500/10'
+                          }`}
+                          title="Set status to Sold Out"
+                        >
+                          <AlertCircle className="w-3 h-3" />
+                          Sold Out
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => toggleCatStatus(cat.id, 'Booked')}
+                          className={`px-2.5 py-1 rounded-lg text-[10px] font-extrabold transition-all flex items-center gap-1 active:scale-95 ${
+                            cat.status?.toLowerCase() === 'booked' || cat.status?.toLowerCase() === 'reserved'
+                              ? 'bg-amber-400 text-slate-950 shadow-md shadow-amber-500/25 scale-[1.03]'
+                              : 'text-slate-400 hover:text-amber-400 hover:bg-amber-500/10'
+                          }`}
+                          title="Set status to Booked"
+                        >
+                          <Clock className="w-3 h-3" />
+                          Booked
+                        </button>
+                      </div>
                     </td>
 
                     <td className="px-4 py-3 text-right">
