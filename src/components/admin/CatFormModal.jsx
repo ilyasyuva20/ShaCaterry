@@ -327,7 +327,7 @@ export default function CatFormModal({ catToEdit, onClose }) {
                 >
                   <option value="Available">Available</option>
                   <option value="Sold Out">Sold Out</option>
-                  <option value="Reserved">Reserved</option>
+                  <option value="Booked">Booked</option>
                 </select>
               </div>
 

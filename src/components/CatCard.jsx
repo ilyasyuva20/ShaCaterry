@@ -12,7 +12,7 @@ export default function CatCard({ cat, onSelect }) {
   const waLink = generateWhatsAppLink(cat, categoryName, settings.ownerPhone);
   const isAvailable = cat.status?.toLowerCase() === 'available';
   const isSoldOut = cat.status?.toLowerCase() === 'sold out';
-  const isReserved = cat.status?.toLowerCase() === 'reserved';
+  const isBooked = cat.status?.toLowerCase() === 'booked' || cat.status?.toLowerCase() === 'reserved';
 
   const getStatusBadge = () => {
     if (isAvailable) {
@@ -33,10 +33,10 @@ export default function CatCard({ cat, onSelect }) {
         </span>
       );
     }
-    if (isReserved) {
+    if (isBooked) {
       return (
         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm backdrop-blur-md">
-          Reserved
+          Booked
         </span>
       );
     }

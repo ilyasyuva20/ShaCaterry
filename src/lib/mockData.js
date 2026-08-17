@@ -116,7 +116,7 @@ export const INITIAL_CATS = [
     eye_color: 'Vivid Cyan',
     gender: 'Male',
     is_vaccinated: true,
-    status: 'Reserved',
+    status: 'Booked',
     price: 30000.00,
     description: 'Fluffy Himalayan kitten combining Persian fur coat with Siamese color points. Reserved by customer, inquiries open for next litter.',
     main_image_url: 'https://images.unsplash.com/photo-1561948955-570b270e7c36?auto=format&fit=crop&w=1000&q=80',

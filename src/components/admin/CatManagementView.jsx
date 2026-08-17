@@ -28,7 +28,7 @@ export default function CatManagementView() {
   const totalCats = cats.length;
   const availableCats = cats.filter(c => c.status?.toLowerCase() === 'available').length;
   const soldOutCats = cats.filter(c => c.status?.toLowerCase() === 'sold out').length;
-  const reservedCats = cats.filter(c => c.status?.toLowerCase() === 'reserved').length;
+  const bookedCats = cats.filter(c => c.status?.toLowerCase() === 'booked' || c.status?.toLowerCase() === 'reserved').length;
 
   // Filtered cats table logic with normalized types
   const filteredTableCats = cats.filter(cat => {
@@ -51,7 +51,7 @@ export default function CatManagementView() {
       currentStatus === 'available'
         ? 'Sold Out'
         : currentStatus === 'sold out'
-        ? 'Reserved'
+        ? 'Booked'
         : 'Available';
     toggleCatStatus(cat.id, nextStatus);
   };
@@ -112,8 +112,8 @@ export default function CatManagementView() {
 
         <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex items-center justify-between">
           <div>
-            <span className="text-slate-400 text-[10px] uppercase font-mono block">Reserved</span>
-            <span className="text-2xl font-black text-amber-400 font-serif">{reservedCats}</span>
+            <span className="text-slate-400 text-[10px] uppercase font-mono block">Booked</span>
+            <span className="text-2xl font-black text-amber-400 font-serif">{bookedCats}</span>
           </div>
           <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-400">
             <Clock className="w-5 h-5" />
@@ -153,7 +153,7 @@ export default function CatManagementView() {
           <option value="">All Statuses</option>
           <option value="Available">Available</option>
           <option value="Sold Out">Sold Out</option>
-          <option value="Reserved">Reserved</option>
+          <option value="Booked">Booked</option>
         </select>
       </div>
 
@@ -225,7 +225,7 @@ export default function CatManagementView() {
                     <td className="px-4 py-3 text-center">
                       <button
                         onClick={() => handleStatusCycle(cat)}
-                        title="Click to cycle status: Available -> Sold Out -> Reserved"
+                        title="Click to cycle status: Available -> Sold Out -> Booked"
                         className={`px-3 py-1 rounded-full text-[11px] font-bold border transition-all active:scale-95 shadow-sm ${
                           isAvail
                             ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30'

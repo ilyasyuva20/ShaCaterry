@@ -60,7 +60,7 @@ export default function SmartFilterDrawer({ isOpen, onClose }) {
             <div className="flex items-center justify-between p-3.5 bg-slate-950/60 rounded-2xl border border-slate-800">
               <div>
                 <h4 className="font-semibold text-slate-200">Show Available Only</h4>
-                <p className="text-[11px] text-slate-400">Hide sold out & reserved cats</p>
+                <p className="text-[11px] text-slate-400">Hide sold out & booked cats</p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
