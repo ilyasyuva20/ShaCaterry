@@ -109,11 +109,11 @@ export const CatProvider = ({ children }) => {
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (!catsError && catsData) {
+      if (!catsError && catsData && catsData.length > 0) {
         setCats(prevLocal => {
           const remoteIds = new Set(catsData.map(c => String(c.id)));
           const localOnly = prevLocal.filter(
-            c => !remoteIds.has(String(c.id)) && typeof c.id === 'string' && c.id.startsWith('cat-')
+            c => !remoteIds.has(String(c.id)) && (typeof c.id === 'string' && (c.id.startsWith('cat-') || c.id.includes('-')))
           );
           return [...catsData, ...localOnly];
         });
@@ -369,6 +369,11 @@ export const CatProvider = ({ children }) => {
       return true;
     }
     return false;
+  };
+
+  const logoutAdmin = () => {
+    setIsAdminAuthenticated(false);
+    localStorage.removeItem(STORAGE_KEY_AUTH);
   };
 
   const updateSettings = async (newSettings) => {
