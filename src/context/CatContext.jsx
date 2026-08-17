@@ -202,11 +202,13 @@ export const CatProvider = ({ children }) => {
 
   const updateCat = async (id, updatedFields) => {
     setLoading(true);
-    const formattedFields = {
-      ...updatedFields,
-      category_id: Number(updatedFields.category_id),
-      price: updatedFields.price ? parseFloat(updatedFields.price) : 0
-    };
+    const formattedFields = { ...updatedFields };
+    if (updatedFields.category_id !== undefined && updatedFields.category_id !== null) {
+      formattedFields.category_id = Number(updatedFields.category_id);
+    }
+    if (updatedFields.price !== undefined && updatedFields.price !== null) {
+      formattedFields.price = parseFloat(updatedFields.price) || 0;
+    }
 
     let updatedFromDb = null;
     if (isSupabaseConfigured() && supabase) {
@@ -217,7 +219,9 @@ export const CatProvider = ({ children }) => {
           .eq('id', id)
           .select();
 
-        if (!error && data && data[0]) {
+        if (error) {
+          console.error('Failed to update cat in Supabase:', error);
+        } else if (data && data[0]) {
           updatedFromDb = data[0];
         }
       } catch (err) {
