@@ -17,10 +17,10 @@ export default function CatCard({ cat, onSelect }) {
   const getStatusBadge = () => {
     if (isAvailable) {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm backdrop-blur-md">
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-emerald-500/30 text-emerald-200 border border-emerald-400/60 shadow-sm backdrop-blur-md">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
           </span>
           Available
         </span>
@@ -28,14 +28,14 @@ export default function CatCard({ cat, onSelect }) {
     }
     if (isSoldOut) {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40 shadow-sm backdrop-blur-md">
+        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-rose-500/30 text-rose-200 border border-rose-400/60 shadow-sm backdrop-blur-md">
           Sold Out
         </span>
       );
     }
     if (isBooked) {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm backdrop-blur-md">
+        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-amber-500/30 text-amber-200 border border-amber-400/60 shadow-sm backdrop-blur-md">
           Booked
         </span>
       );
@@ -64,13 +64,13 @@ export default function CatCard({ cat, onSelect }) {
 
           <div className="flex items-center gap-1">
             {cat.video_url && (
-              <span className="p-1 rounded-lg bg-slate-950/70 border border-amber-500/30 text-amber-400 backdrop-blur-md shadow-sm" title="Video available">
+              <span className="p-1 rounded-lg bg-slate-950/80 border border-amber-500/40 text-amber-300 backdrop-blur-md shadow-sm" title="Video available">
                 <Video className="w-3.5 h-3.5" />
               </span>
             )}
             {cat.is_vaccinated && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-sky-500/20 text-sky-300 border border-sky-500/40 backdrop-blur-md">
-                <ShieldCheck className="w-3 h-3 text-sky-400" />
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-500/30 text-sky-200 border border-sky-400/60 backdrop-blur-md">
+                <ShieldCheck className="w-3 h-3 text-sky-300" />
                 <span className="hidden xs:inline">Vaccinated</span>
               </span>
             )}
@@ -78,8 +78,8 @@ export default function CatCard({ cat, onSelect }) {
         </div>
 
         {/* Category Pill Over Image Bottom */}
-        <div className="absolute bottom-2.5 left-2.5 z-10">
-          <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-slate-900/80 text-amber-400 border border-amber-500/30 backdrop-blur-md">
+        <div className="absolute bottom-2.5 left-2.5 z-10 max-w-[85%]">
+          <span className="px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase tracking-wider bg-slate-950/90 text-amber-300 border border-amber-500/40 backdrop-blur-md truncate block">
             {categoryName}
           </span>
         </div>
@@ -92,21 +92,21 @@ export default function CatCard({ cat, onSelect }) {
             {cat.title}
           </h3>
 
-          <div className="mt-2 flex items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-2">
-            <span className="font-medium text-slate-300">{cat.age}</span>
+          <div className="mt-2 flex items-center justify-between text-xs text-slate-300 border-t border-slate-800/80 pt-2">
+            <span className="font-semibold text-slate-200">{cat.age}</span>
 
-            <div className="flex items-center gap-1 bg-slate-950/60 px-2 py-0.5 rounded-md border border-slate-800">
+            <div className="flex items-center gap-1 bg-slate-950/80 px-2 py-0.5 rounded-md border border-slate-800">
               {cat.gender === 'Male' ? (
                 <Mars className="w-3.5 h-3.5 text-blue-400" />
               ) : (
                 <Venus className="w-3.5 h-3.5 text-pink-400" />
               )}
-              <span className="text-[11px] font-medium text-slate-200">{cat.gender}</span>
+              <span className="text-[11px] font-bold text-slate-200">{cat.gender}</span>
             </div>
 
-            <div className="flex items-center gap-1 text-[11px] text-slate-400">
-              <Eye className="w-3 h-3 text-amber-400/80" />
-              <span className="truncate max-w-[70px]">{cat.eye_color}</span>
+            <div className="flex items-center gap-1 text-[11px] text-slate-300">
+              <Eye className="w-3 h-3 text-amber-400" />
+              <span className="truncate max-w-[70px] font-medium">{cat.eye_color}</span>
             </div>
           </div>
         </div>
