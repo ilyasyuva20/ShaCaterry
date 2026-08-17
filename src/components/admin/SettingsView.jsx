@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MessageCircle, Database, Save, CheckCircle2, Copy, Check, ShieldCheck, PhoneCall } from 'lucide-react';
 import { useCatContext } from '../../context/CatContext';
 import { isSupabaseConfigured } from '../../lib/supabase';
@@ -13,6 +13,16 @@ export default function SettingsView() {
     supabaseUrl: settings.supabaseUrl || '',
     supabaseAnonKey: settings.supabaseAnonKey || ''
   });
+
+  useEffect(() => {
+    setFormSettings({
+      ownerPhone: settings.ownerPhone || '918089579575',
+      catteryName: settings.catteryName || 'Sha Cattery',
+      currency: settings.currency || '₹',
+      supabaseUrl: settings.supabaseUrl || '',
+      supabaseAnonKey: settings.supabaseAnonKey || ''
+    });
+  }, [settings]);
 
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [copiedSql, setCopiedSql] = useState(false);

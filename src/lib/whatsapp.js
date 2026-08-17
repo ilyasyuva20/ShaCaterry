@@ -19,18 +19,33 @@ export function formatWhatsAppPhone(phone = '918089579575') {
  * Generate formatted WhatsApp link for cat purchase or interest inquiry.
  * @param {Object} cat - Cat object
  * @param {string} categoryName - Category breed name
- * @param {string} ownerPhone - Owner WhatsApp phone number
+ * @param {Object|string} settingsOrPhone - Settings object from CatContext or owner phone number string
  */
-export function generateWhatsAppLink(cat, categoryName = 'Royal Cat', ownerPhone = '918089579575') {
+export function generateWhatsAppLink(cat, categoryName = 'Royal Cat', settingsOrPhone = {}) {
+  let ownerPhone = '918089579575';
+  let catteryName = 'Sha Cattery';
+  let currency = '₹';
+
+  if (typeof settingsOrPhone === 'object' && settingsOrPhone !== null) {
+    if (settingsOrPhone.ownerPhone) ownerPhone = settingsOrPhone.ownerPhone;
+    if (settingsOrPhone.catteryName) catteryName = settingsOrPhone.catteryName;
+    if (settingsOrPhone.currency) currency = settingsOrPhone.currency;
+  } else if (typeof settingsOrPhone === 'string' && settingsOrPhone.trim()) {
+    ownerPhone = settingsOrPhone;
+  }
+
   const cleanPhone = formatWhatsAppPhone(ownerPhone);
   const isAvailable = cat?.status?.toLowerCase() === 'available';
+
+  const priceDisplay = cat?.price > 0 ? `${currency}${cat.price.toLocaleString()}` : 'Price on Request';
+  const businessUpper = catteryName.toUpperCase();
 
   let messageText = '';
 
   if (isAvailable) {
-    messageText = `👑 *SHA CATTERY — NEW ORDER REQUEST* 🐾
+    messageText = `👑 *${businessUpper} — NEW ORDER REQUEST* 🐾
 ─────────────────────────────
-*Hi Sha Cattery,* I would like to buy this kitten!
+*Hi ${catteryName},* I would like to buy this kitten!
 
 📌 *KITTEN DETAILS*
 • *Title:* ${cat?.title || 'Cat'}
@@ -41,7 +56,7 @@ export function generateWhatsAppLink(cat, categoryName = 'Royal Cat', ownerPhone
 • *Eye Color:* ${cat?.eye_color || 'N/A'}
 • *Vaccinated:* ${cat?.is_vaccinated ? 'Yes ✅' : 'No ❌'}
 
-💰 *PRICE:* ${cat?.price ? `₹${cat.price.toLocaleString()}` : 'Price on Request'}
+💰 *PRICE:* ${priceDisplay}
 
 📸 *PHOTO PREVIEW:*
 ${cat?.main_image_url || ''}
@@ -49,10 +64,10 @@ ${cat?.main_image_url || ''}
 💬 *Please share payment details and delivery options.*
 ─────────────────────────────`;
   } else {
-    // Sold Out or Reserved
-    messageText = `🔔 *SHA CATTERY — INTEREST NOTIFICATION* 🐾
+    // Sold Out or Booked
+    messageText = `🔔 *${businessUpper} — INTEREST NOTIFICATION* 🐾
 ─────────────────────────────
-*Hi Sha Cattery,* I am interested in this kitten (*Status: ${cat?.status || 'Not Available'}*):
+*Hi ${catteryName},* I am interested in this kitten (*Status: ${cat?.status || 'Not Available'}*):
 
 📌 *KITTEN DETAILS*
 • *Title:* ${cat?.title || 'Cat'}
@@ -63,7 +78,7 @@ ${cat?.main_image_url || ''}
 • *Eye Color:* ${cat?.eye_color || 'N/A'}
 • *Vaccinated:* ${cat?.is_vaccinated ? 'Yes ✅' : 'No ❌'}
 
-💰 *LISTED PRICE:* ${cat?.price ? `₹${cat.price.toLocaleString()}` : 'Price on Request'}
+💰 *LISTED PRICE:* ${priceDisplay}
 
 📸 *PHOTO PREVIEW:*
 ${cat?.main_image_url || ''}

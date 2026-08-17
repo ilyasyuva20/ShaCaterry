@@ -42,7 +42,7 @@ export default function CatDetailModal({ cat, onClose }) {
     mediaList.push({ type: 'image', url: imgUrl });
   });
 
-  const waLink = generateWhatsAppLink(cat, categoryName, settings.ownerPhone);
+  const waLink = generateWhatsAppLink(cat, categoryName, settings);
   const isAvailable = cat.status?.toLowerCase() === 'available';
   const isSoldOut = cat.status?.toLowerCase() === 'sold out';
 

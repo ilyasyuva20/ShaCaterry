@@ -9,7 +9,7 @@ export default function CatCard({ cat, onSelect }) {
   const categoryObj = categories.find(c => c.id === cat.category_id);
   const categoryName = categoryObj ? categoryObj.name : 'Royal Cat';
 
-  const waLink = generateWhatsAppLink(cat, categoryName, settings.ownerPhone);
+  const waLink = generateWhatsAppLink(cat, categoryName, settings);
   const isAvailable = cat.status?.toLowerCase() === 'available';
   const isSoldOut = cat.status?.toLowerCase() === 'sold out';
   const isBooked = cat.status?.toLowerCase() === 'booked' || cat.status?.toLowerCase() === 'reserved';
