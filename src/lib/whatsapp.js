@@ -4,8 +4,8 @@
  * @param {string} phone 
  * @returns {string}
  */
-export function formatWhatsAppPhone(phone = '918089579575') {
-  if (!phone) return '918089579575';
+export function formatWhatsAppPhone(phone = '') {
+  if (!phone) return '';
   let cleaned = String(phone).replace(/\D/g, '');
   if (cleaned.length === 10) {
     cleaned = '91' + cleaned;
@@ -22,7 +22,7 @@ export function formatWhatsAppPhone(phone = '918089579575') {
  * @param {Object|string} settingsOrPhone - Settings object from CatContext or owner phone number string
  */
 export function generateWhatsAppLink(cat, categoryName = 'Royal Cat', settingsOrPhone = {}) {
-  let ownerPhone = '918089579575';
+  let ownerPhone = '';
   let catteryName = 'Sha Cattery';
   let currency = '₹';
 
@@ -38,14 +38,14 @@ export function generateWhatsAppLink(cat, categoryName = 'Royal Cat', settingsOr
   const isAvailable = cat?.status?.toLowerCase() === 'available';
 
   const priceDisplay = cat?.price > 0 ? `${currency}${cat.price.toLocaleString()}` : 'Price on Request';
-  const businessUpper = catteryName.toUpperCase();
+  const businessUpper = (catteryName || 'Sha Cattery').toUpperCase();
 
   let messageText = '';
 
   if (isAvailable) {
     messageText = `👑 *${businessUpper} — NEW ORDER REQUEST* 🐾
 ─────────────────────────────
-*Hi ${catteryName},* I would like to buy this kitten!
+*Hi ${catteryName || 'Sha Cattery'},* I would like to buy this kitten!
 
 📌 *KITTEN DETAILS*
 • *Title:* ${cat?.title || 'Cat'}
@@ -67,7 +67,7 @@ ${cat?.main_image_url || ''}
     // Sold Out or Booked
     messageText = `🔔 *${businessUpper} — INTEREST NOTIFICATION* 🐾
 ─────────────────────────────
-*Hi ${catteryName},* I am interested in this kitten (*Status: ${cat?.status || 'Not Available'}*):
+*Hi ${catteryName || 'Sha Cattery'},* I am interested in this kitten (*Status: ${cat?.status || 'Not Available'}*):
 
 📌 *KITTEN DETAILS*
 • *Title:* ${cat?.title || 'Cat'}
@@ -88,5 +88,5 @@ ${cat?.main_image_url || ''}
   }
 
   const encodedText = encodeURIComponent(messageText);
-  return `https://wa.me/${cleanPhone}?text=${encodedText}`;
+  return cleanPhone ? `https://wa.me/${cleanPhone}?text=${encodedText}` : '#';
 }

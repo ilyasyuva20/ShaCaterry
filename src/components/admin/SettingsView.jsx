@@ -7,7 +7,7 @@ export default function SettingsView() {
   const { settings, setSettings, loadSupabaseData } = useCatContext();
 
   const [formSettings, setFormSettings] = useState({
-    ownerPhone: settings.ownerPhone || '918089579575',
+    ownerPhone: settings.ownerPhone || '',
     catteryName: settings.catteryName || 'Sha Cattery',
     currency: settings.currency || '₹',
     supabaseUrl: settings.supabaseUrl || '',
@@ -16,7 +16,7 @@ export default function SettingsView() {
 
   useEffect(() => {
     setFormSettings({
-      ownerPhone: settings.ownerPhone || '918089579575',
+      ownerPhone: settings.ownerPhone || '',
       catteryName: settings.catteryName || 'Sha Cattery',
       currency: settings.currency || '₹',
       supabaseUrl: settings.supabaseUrl || '',

@@ -38,13 +38,14 @@ export const CatProvider = ({ children }) => {
   const [settings, setSettings] = useState(() => {
     const saved = localStorage.getItem(STORAGE_KEY_SETTINGS);
     if (saved) {
-      const parsed = JSON.parse(saved);
-      if (parsed.currency === '$') parsed.currency = '₹';
-      if (parsed.ownerPhone === '8089579575') parsed.ownerPhone = '918089579575';
-      return parsed;
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed.currency === '$') parsed.currency = '₹';
+        return parsed;
+      } catch (e) {}
     }
     return {
-      ownerPhone: '918089579575',
+      ownerPhone: '',
       catteryName: 'Sha Cattery',
       currency: '₹',
       supabaseUrl: import.meta.env.VITE_SUPABASE_URL || '',
