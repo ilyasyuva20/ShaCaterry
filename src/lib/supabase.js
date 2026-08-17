@@ -8,6 +8,7 @@ export const isSupabaseConfigured = () => {
     supabaseUrl && 
     supabaseAnonKey && 
     !supabaseUrl.includes('YOUR_SUPABASE_URL') &&
+    !supabaseAnonKey.includes('your_supabase_anon_key_here') &&
     supabaseUrl.startsWith('https://')
   );
 };

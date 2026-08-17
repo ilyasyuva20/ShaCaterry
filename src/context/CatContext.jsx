@@ -10,19 +10,12 @@ const STORAGE_KEY_SETTINGS = 'sha_cattery_settings_v1';
 const STORAGE_KEY_AUTH = 'sha_cattery_auth_v1';
 
 export const CatProvider = ({ children }) => {
-  // State initialization with auto-merge for missing categories
+  // State initialization
   const [categories, setCategories] = useState(() => {
     const saved = localStorage.getItem(STORAGE_KEY_CATEGORIES);
     if (saved) {
       try {
-        const parsed = JSON.parse(saved);
-        const updated = [...parsed];
-        INITIAL_CATEGORIES.forEach(initCat => {
-          if (!updated.some(c => c.name.toLowerCase() === initCat.name.toLowerCase())) {
-            updated.push(initCat);
-          }
-        });
-        return updated;
+        return JSON.parse(saved);
       } catch (e) {
         return INITIAL_CATEGORIES;
       }
@@ -34,14 +27,7 @@ export const CatProvider = ({ children }) => {
     const saved = localStorage.getItem(STORAGE_KEY_CATS);
     if (saved) {
       try {
-        const parsed = JSON.parse(saved);
-        const updated = [...parsed];
-        INITIAL_CATS.forEach(initCat => {
-          if (!updated.some(c => c.id === initCat.id)) {
-            updated.push(initCat);
-          }
-        });
-        return updated;
+        return JSON.parse(saved);
       } catch (e) {
         return INITIAL_CATS;
       }

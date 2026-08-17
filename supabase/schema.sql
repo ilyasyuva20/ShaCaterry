@@ -50,31 +50,29 @@ ALTER TABLE cats ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Public Read Categories" ON categories
   FOR SELECT USING (true);
 
-CREATE POLICY "Admin Insert Categories" ON categories
-  FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+CREATE POLICY "Public Insert Categories" ON categories
+  FOR INSERT WITH CHECK (true);
 
-CREATE POLICY "Admin Update Categories" ON categories
-  FOR UPDATE USING (auth.role() = 'authenticated');
+CREATE POLICY "Public Update Categories" ON categories
+  FOR UPDATE USING (true);
 
-CREATE POLICY "Admin Delete Categories" ON categories
-  FOR DELETE USING (auth.role() = 'authenticated');
+CREATE POLICY "Public Delete Categories" ON categories
+  FOR DELETE USING (true);
 
 -- RLS Policies for Cats
 CREATE POLICY "Public Read Cats" ON cats
   FOR SELECT USING (true);
 
-CREATE POLICY "Admin Insert Cats" ON cats
-  FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+CREATE POLICY "Public Insert Cats" ON cats
+  FOR INSERT WITH CHECK (true);
 
-CREATE POLICY "Admin Update Cats" ON cats
-  FOR UPDATE USING (auth.role() = 'authenticated');
+CREATE POLICY "Public Update Cats" ON cats
+  FOR UPDATE USING (true);
 
-CREATE POLICY "Admin Delete Cats" ON cats
-  FOR DELETE USING (auth.role() = 'authenticated');
+CREATE POLICY "Public Delete Cats" ON cats
+  FOR DELETE USING (true);
 
 -- 5. Storage Buckets Configuration for Supabase Storage
--- Note: You can create the bucket manually in Supabase Storage UI named 'cat-media' (Public).
--- Alternatively, execute the following SQL to enable storage bucket setup:
 INSERT INTO storage.buckets (id, name, public) 
 VALUES ('cat-media', 'cat-media', true)
 ON CONFLICT (id) DO NOTHING;
@@ -83,9 +81,9 @@ ON CONFLICT (id) DO NOTHING;
 CREATE POLICY "Public Access Cat Media" ON storage.objects
   FOR SELECT USING (bucket_id = 'cat-media');
 
--- Allow authenticated users to upload/update media files
-CREATE POLICY "Admin Upload Cat Media" ON storage.objects
-  FOR INSERT WITH CHECK (bucket_id = 'cat-media' AND auth.role() = 'authenticated');
+-- Allow public upload and delete for media files
+CREATE POLICY "Public Upload Cat Media" ON storage.objects
+  FOR INSERT WITH CHECK (bucket_id = 'cat-media');
 
-CREATE POLICY "Admin Delete Cat Media" ON storage.objects
-  FOR DELETE USING (bucket_id = 'cat-media' AND auth.role() = 'authenticated');
+CREATE POLICY "Public Delete Cat Media" ON storage.objects
+  FOR DELETE USING (bucket_id = 'cat-media');
